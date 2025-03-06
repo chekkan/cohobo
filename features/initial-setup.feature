@@ -4,7 +4,7 @@ Feature: Initial Setup
     Given there are no users in the system
 
   Scenario: Redirected to setup page
-    When the annonymous user navigates to '/' page
+    When an annonymous user navigates to '/' page
     Then the annonymous user is redirected to '/setup' page
   
   Scenario: Setup form submission

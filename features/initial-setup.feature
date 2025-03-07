@@ -9,16 +9,16 @@ Feature: Initial Setup
   
   Scenario: Setup form submission
     Given an annonymous user navigates to '/setup' page
-    When the form is submitted:
-      | Email | garfield@cohobo.test |
-      | Password | secure_password |
-      | Confirm Password | secure_password |
-    Then the user is redirected to `/` page
+    When the initial setup form is submitted:
+      | Email            | garfield@cohobo.test |
+      | Password         | secure_password      |
+      | Confirm Password | secure_password      |
+    Then the user is redirected to '/' page
     And the 'Logout' link is visible
 
   Scenario: Minimum password requirement not met
     Given an annonymous user navigates to '/setup' page
-    When the form is submitted:
+    When the initial setup form is submitted:
       | Email | garfield@cohobo.test |
       | Password | insecure |
       | Confirm Password | insecure |
@@ -27,7 +27,7 @@ Feature: Initial Setup
 
   Scenario: Password doesn't match confirmation
     Given an annonymous user navigates to '/setup' page
-    When the form is submitted:
+    When the initial setup form is submitted:
       | Email | garfield@cohobo.test |
       | Password | secure_password |
       | Confirm Password | something_else |
@@ -36,7 +36,7 @@ Feature: Initial Setup
 
   Scenario: Not valid Email
     Given an annonymous user navigates to '/setup' page
-    When the form is submitted:
+    When the initial setup form is submitted:
       | Email | garfield |
       | Password | secure_password |
       | Confirm Password | secure_password |

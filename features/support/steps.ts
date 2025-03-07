@@ -1,5 +1,5 @@
-import { Given, When, Then, AfterAll } from "@cucumber/cucumber";
-import { Browser, Builder } from "selenium-webdriver";
+import { Given, When, Then, AfterAll, DataTable } from "@cucumber/cucumber";
+import { Browser, Builder, By } from "selenium-webdriver";
 import { expect } from 'chai';
 
 const driver = await new Builder().forBrowser(Browser.CHROME).build();
@@ -15,9 +15,15 @@ When('an annonymous user navigates to {string} page', async function (path: stri
   await driver.get("http://localhost:5173" + path);
 });
 
-When('the form is submitted:', function (dataTable) {
-  // Write code here that turns the phrase above into concrete actions
-  return 'pending';
+When('the initial setup form is submitted:', async function (dataTable: DataTable) {
+  const form = await driver.findElement(By.css("form"));
+  const emailField = form.findElement(By.name("email"));
+  await emailField.sendKeys(dataTable.rowsHash()["Email"]);
+  const passwordField = form.findElement(By.name("password"));
+  await passwordField.sendKeys(dataTable.rowsHash()["Password"]);
+  const confirmPasswordField = form.findElement(By.name("confirm_password"));
+  await confirmPasswordField.sendKeys(dataTable.rowsHash()["Confirm Password"]);
+  await form.submit();
 });
 
 Then('the annonymous user is redirected to {string} page', async function (string) {
@@ -26,9 +32,9 @@ Then('the annonymous user is redirected to {string} page', async function (strin
   expect(currentUrl).to.equal('http://localhost:5173/setup');
 });
 
-Then('the user is redirected to `\\/` page', function () {
-  // Write code here that turns the phrase above into concrete actions
-  return 'pending';
+Then('the user is redirected to {string} page', async function (path: string) {
+  const currentUrl = await driver.getCurrentUrl();
+  expect(currentUrl).to.equal('http://localhost:5173' + path);
 });
 
 Then('the {string} link is visible', function (string) {

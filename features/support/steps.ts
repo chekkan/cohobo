@@ -42,9 +42,8 @@ Then('the user is redirected to {string} page', async function (path: string) {
   expect(currentUrl).to.equal('http://localhost:5173' + path);
 });
 
-Then('the {string} link is visible', function (string) {
-  // Write code here that turns the phrase above into concrete actions
-  return 'pending';
+Then('the {string} link is visible', async function (text: string) {
+  await driver.findElement(By.linkText(text));
 });
 
 Then('the validation error message is displayed', function (dataTable) {

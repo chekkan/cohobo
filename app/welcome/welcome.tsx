@@ -42,6 +42,7 @@ export function Welcome() {
           </nav>
         </div>
       </div>
+      <a href="/foo">Logout</a>
     </main>
   );
 }

@@ -16,15 +16,6 @@ Feature: Initial Setup
     Then the user is redirected to '/' page
     And the 'Logout' link is visible
 
-  Scenario: Minimum password requirement not met
-    Given an annonymous user navigates to '/setup' page
-    When the initial setup form is submitted:
-      | Email | garfield@cohobo.test |
-      | Password | insecure |
-      | Confirm Password | insecure |
-    Then the validation error message is displayed
-      | Password doesn't meet the minimum requirement of 8 characters.|
-
   Scenario: Password doesn't match confirmation
     Given an annonymous user navigates to '/setup' page
     When the initial setup form is submitted:

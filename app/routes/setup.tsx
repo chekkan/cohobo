@@ -2,6 +2,15 @@ import { PrismaClient } from "@prisma/client";
 import { data, redirect, useFetcher } from "react-router"
 import type { ActionFunctionArgs } from "react-router";
 
+export async function loader() {
+  const prisma = new PrismaClient();
+  const allUsers = await prisma.user.findMany({ take: 1 });
+  if (allUsers.length > 0) {
+    throw new Response("Not Found", { status: 404, statusText: "Not Found" });
+  }
+  return null;
+}
+
 export default function Setup() {
   const fetcher = useFetcher();
   const errors = fetcher.data?.errors;

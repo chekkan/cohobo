@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import { afterEach, beforeEach, expect, test } from 'vitest';
-import { default as Setup, action } from './setup';
+import { default as Setup, action, loader } from './setup';
 import { PrismaClient } from '@prisma/client';
 import { createRoutesStub } from 'react-router';
 import { cleanup, render, screen } from "@testing-library/react";
@@ -32,6 +32,12 @@ test("action creates new user", async function () {
   const prisma = new PrismaClient();
   const allUsers = await prisma.user.findMany();
   expect(allUsers.length).toBeGreaterThan(0);
+});
+
+test("loader returns 404 - not found", async function () {
+  const prisma = new PrismaClient();
+  await prisma.user.create({ data: { email: "jack@cohobo.test", password: "secure_password" } })
+  expect(loader()).rejects.toMatchObject({ status: 404, statusText: "Not Found" });
 })
 
 test.each([['John Cena'], ['Daniel Craig']])("invalid email '%s' validation error on form submission", async function (email) {

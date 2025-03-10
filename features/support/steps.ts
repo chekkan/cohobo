@@ -14,19 +14,26 @@ Given('there are no users in the system', async function () {
   await prisma.user.deleteMany();
 });
 
-When('an annonymous user navigates to {string} page', async function (path: string) {
+Given('the user', async function (dataTable: DataTable) {
+  const prisma = new PrismaClient();
+  const data = dataTable.rowsHash();
+  await prisma.user.create({ data: { email: data["Email"], password: data["Password"] } });
+});
+
+When('a(n) (annonymous )user navigates to {string} page', async function (path: string) {
   await driver.get("http://localhost:5173" + path);
 });
 
 When('the initial setup form is submitted:', async function (dataTable: DataTable) {
+  const data = dataTable.rowsHash();
   const currentUrl = await driver.getCurrentUrl();
   const form = await driver.findElement(By.css("form"));
   const emailField = form.findElement(By.name("email"));
-  await emailField.sendKeys(dataTable.rowsHash()["Email"]);
+  await emailField.sendKeys(data["Email"]);
   const passwordField = form.findElement(By.name("password"));
-  await passwordField.sendKeys(dataTable.rowsHash()["Password"]);
+  await passwordField.sendKeys(data["Password"]);
   const confirmPasswordField = form.findElement(By.name("confirm_password"));
-  await confirmPasswordField.sendKeys(dataTable.rowsHash()["Confirm Password"]);
+  await confirmPasswordField.sendKeys(data["Confirm Password"]);
   const submitButton = await form.findElement(By.css('button[type="submit"]'));
   await submitButton.click();
   // wait for either the URL to change or a validation error message
@@ -61,3 +68,9 @@ Then('the validation error messages are displayed', async function (dataTable: D
   expect(messages).to.deep.equal(expected);
 });
 
+Then('response is 404 - not found', async function () {
+  const pageTitle = await driver.findElement(By.css("main h1"));
+  expect(await pageTitle.getText()).to.equal("404");
+  const text = await driver.findElement(By.css("main p"));
+  expect(await text.getText()).to.equal("The requested page could not be found.");
+});

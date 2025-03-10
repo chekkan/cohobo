@@ -16,21 +16,13 @@ Feature: Initial Setup
     Then the user is redirected to '/' page
     And the 'Logout' link is visible
 
-  Scenario: Password doesn't match confirmation
-    Given an annonymous user navigates to '/setup' page
-    When the initial setup form is submitted:
-      | Email | garfield@cohobo.test |
-      | Password | secure_password |
-      | Confirm Password | something_else |
-    Then the validation error message is displayed
-      | Passwords don't match. |
-
-  Scenario: Not valid Email
+  Scenario: Setup form validation
     Given an annonymous user navigates to '/setup' page
     When the initial setup form is submitted:
       | Email | garfield |
       | Password | secure_password |
-      | Confirm Password | secure_password |
-    Then the validation error message is displayed
+      | Confirm Password | something_else |
+    Then the validation error messages are displayed
       | Not a valid email. |
+      | Passwords don't match. |
 

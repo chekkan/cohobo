@@ -35,7 +35,7 @@ test("action creates new user", async function () {
 })
 
 test.each([['John Cena'], ['Daniel Craig']])("invalid email '%s' validation error on form submission", async function (email) {
-  const App = createRoutesStub([{ path: "/setup", Component: Setup, action: action }])
+  const App = createRoutesStub([{ path: "/setup", Component: Setup, action }])
   render(<App initialEntries={["/setup"]} />);
   const emailField = await screen.findByLabelText(/email/i);
   await userEvent.type(emailField, email);
@@ -50,3 +50,22 @@ test.each([['John Cena'], ['Daniel Craig']])("invalid email '%s' validation erro
   expect(validationErrors).to.toHaveLength(1);
   expect(validationErrors[0].textContent).to.equal("Not a valid email.");
 })
+
+test.todo("email is required");
+
+test("passwords not matching", async function () {
+  const App = createRoutesStub([{ path: "/setup", Component: Setup, action }]);
+  render(<App initialEntries={["/setup"]} />);
+  const emailField = await screen.findByLabelText(/email/i);
+  await userEvent.type(emailField, "garfield@cohobo.test");
+  const passwordField = await screen.findByLabelText(/^password$/i);
+  await userEvent.type(passwordField, "secure_password");
+  const confirmField = await screen.findByLabelText(/confirm\ password/i);
+  await userEvent.type(confirmField, "something_different");
+  const submitButton = await screen.findByRole('button', { name: /submit/i });
+  await userEvent.click(submitButton);
+
+  const validationErrors = await screen.findAllByRole("alert");
+  expect(validationErrors).to.toHaveLength(1);
+  expect(validationErrors[0].textContent).to.equal("Passwords don't match.");
+});

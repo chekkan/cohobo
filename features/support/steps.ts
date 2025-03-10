@@ -57,6 +57,7 @@ Then('the validation error messages are displayed', async function (dataTable: D
   const messages = await Promise.all(errors.map(async function (elem) {
     return await elem.getText();
   }));
-  expect(messages).to.equal(dataTable.raw().map(function (c) { return c[0]; }));
+  const expected = dataTable.raw().map(function (c) { return c[0] });
+  expect(messages).to.deep.equal(expected);
 });
 

@@ -12,6 +12,7 @@ export default function Setup() {
       {errors?.email ? <em role='alert'>{errors.email}</em> : null}
       <label htmlFor="password">Password</label>
       <input name="password" id="password" />
+      {errors?.password ? <em role='alert'>{errors.password}</em> : null}
       <label htmlFor="confirm_password">Confirm Password</label>
       <input name="confirm_password" id="confirm_password" />
       <button type="submit">Submit</button>
@@ -22,10 +23,16 @@ export default function Setup() {
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+  const confirmPassword = formData.get("confirm_password") as string;
 
-  const errors = {} as { email?: string };
+  const errors = {} as { email?: string, password?: string };
   if (email && !email.includes("@")) {
     errors.email = "Not a valid email.";
+  }
+
+  if (password != confirmPassword) {
+    errors.password = "Passwords don't match.";
   }
   if (Object.keys(errors).length > 0) {
     return data({ errors }, { status: 200 });

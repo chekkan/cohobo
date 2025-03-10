@@ -36,11 +36,17 @@ export async function action({ request }: ActionFunctionArgs) {
   const confirmPassword = formData.get("confirm_password") as string;
 
   const errors = {} as { email?: string, password?: string };
-  if (email && !email.includes("@")) {
+  if (!email) {
+    errors.email = "Email is required.";
+  }
+  else if (!email.includes("@")) {
     errors.email = "Not a valid email.";
   }
 
-  if (password != confirmPassword) {
+  if (!password) {
+    errors.password = "Password is required.";
+  }
+  else if (password != confirmPassword) {
     errors.password = "Passwords don't match.";
   }
   if (Object.keys(errors).length > 0) {

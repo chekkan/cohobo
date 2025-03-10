@@ -11,9 +11,13 @@ import userEvent from "@testing-library/user-event";
 let mockRequest: Request;
 
 beforeEach(function () {
+  const form = new FormData();
+  form.append("email", "jack@cohobo.test");
+  form.append("password", "secure_password");
+  form.append("confirm_password", "secure_password");
   mockRequest = new Request("http://localhost/setup", {
     method: "POST",
-    body: new FormData()
+    body: form
   });
 })
 
@@ -37,7 +41,7 @@ test("action creates new user", async function () {
 test("loader returns 404 - not found", async function () {
   const prisma = new PrismaClient();
   await prisma.user.create({ data: { email: "jack@cohobo.test", password: "secure_password" } })
-  expect(loader()).rejects.toMatchObject({ status: 404, statusText: "Not Found" });
+  await expect(loader()).rejects.toMatchObject({ status: 404, statusText: "Not Found" });
 })
 
 test.each([['John Cena'], ['Daniel Craig']])("invalid email '%s' validation error on form submission", async function (email) {
@@ -57,7 +61,20 @@ test.each([['John Cena'], ['Daniel Craig']])("invalid email '%s' validation erro
   expect(validationErrors[0].textContent).to.equal("Not a valid email.");
 })
 
-test.todo("email is required");
+test("email is required", async function () {
+  const App = createRoutesStub([{ path: "/setup", Component: Setup, action }])
+  render(<App initialEntries={["/setup"]} />);
+  const passwordField = await screen.findByLabelText(/^password$/i);
+  await userEvent.type(passwordField, "secure_password");
+  const confirmField = await screen.findByLabelText(/confirm\ password/i);
+  await userEvent.type(confirmField, "secure_password");
+  const submitButton = await screen.findByRole('button', { name: /submit/i });
+  await userEvent.click(submitButton);
+
+  const validationErrors = await screen.findAllByRole("alert");
+  expect(validationErrors).to.toHaveLength(1);
+  expect(validationErrors[0].textContent).to.equal("Email is required.");
+});
 
 test("passwords not matching", async function () {
   const App = createRoutesStub([{ path: "/setup", Component: Setup, action }]);
@@ -74,4 +91,17 @@ test("passwords not matching", async function () {
   const validationErrors = await screen.findAllByRole("alert");
   expect(validationErrors).to.toHaveLength(1);
   expect(validationErrors[0].textContent).to.equal("Passwords don't match.");
+});
+
+test("password is required", async function () {
+  const App = createRoutesStub([{ path: "/setup", Component: Setup, action }]);
+  render(<App initialEntries={["/setup"]} />);
+  const emailField = await screen.findByLabelText(/email/i);
+  await userEvent.type(emailField, "garfield@cohobo.test");
+  const submitButton = await screen.findByRole('button', { name: /submit/i });
+  await userEvent.click(submitButton);
+
+  const validationErrors = await screen.findAllByRole("alert");
+  expect(validationErrors).to.toHaveLength(1);
+  expect(validationErrors[0].textContent).to.equal("Password is required.");
 });

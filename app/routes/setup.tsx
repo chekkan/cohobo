@@ -15,16 +15,23 @@ export default function Setup() {
   const fetcher = useFetcher();
   const errors = fetcher.data?.errors;
   return <div>
-    <fetcher.Form method="post">
-      <label htmlFor="email">Email</label>
-      <input name="email" id="email" />
-      {errors?.email ? <em role='alert'>{errors.email}</em> : null}
-      <label htmlFor="password">Password</label>
-      <input name="password" id="password" />
-      {errors?.password ? <em role='alert'>{errors.password}</em> : null}
-      <label htmlFor="confirm_password">Confirm Password</label>
-      <input name="confirm_password" id="confirm_password" />
-      <button type="submit">Submit</button>
+    <h1 className="text-xl font-bold text-center my-8">Setup</h1>
+    <fetcher.Form method="post" className="md:w-1/2 mx-4 md:mx-auto border rounded border-black/10 my-4 p-3 bg-yellow-50/50">
+      <div className="mb-2">
+        <label htmlFor="email">Email</label>
+        <input name="email" id="email" className="w-full border border-black/50 bg-white" />
+        {errors?.email ? <em role='alert' className="text-red-400 text-sm">{errors.email}</em> : null}
+      </div>
+      <div className="mb-2">
+        <label htmlFor="password">Password</label>
+        <input type="password" name="password" id="password" className="w-full border border-black/50 bg-white" />
+        {errors?.password ? <em role='alert' className="text-red-400 text-sm">{errors.password}</em> : null}
+      </div>
+      <div className="mb-2">
+        <label htmlFor="confirm_password">Confirm Password</label>
+        <input type="password" name="confirm_password" id="confirm_password" className="w-full border border-black/50 bg-white" />
+      </div>
+      <button type="submit" className="border rounded-md px-4 py-2 bg-sky-500/100 text-sm text-white">Submit</button>
     </fetcher.Form>
   </div>
 }
